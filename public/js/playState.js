@@ -35,16 +35,15 @@ function handleKeyMessages() {
 
           const otherplayer = window.globalOtherHeros.get(messageEvent.message.uuid);
           otherplayer.position.set(messageEvent.message.position.x, messageEvent.message.position.y); // set the position of each player according to x y
-
+          otherplayer.talk(messageEvent.message.playerText);
           otherplayer.initialRemoteFrame = messageEvent.message.frameCounter;
           otherplayer.initialLocalFrame = window.frameCounter;
           window.sendKeyMessage({}); // Send publish to all clients about user information
         }
         if (messageEvent.message.position && window.globalOtherHeros.has(messageEvent.message.uuid)) { // If the message contains the position of the player and the player has a uuid that matches with one in the level
-          console.log('playstate.js', messageEvent.message.playerText);
-          //otherplayer.talk(messageEvent.message.playerText);
           window.keyMessages.push(messageEvent);
           const otherplayer = window.globalOtherHeros.get(messageEvent.message.uuid);
+          otherplayer.talk(messageEvent.message.playerText);
           const frameDelta = messageEvent.message.frameCounter - otherplayer.lastKeyFrame;
           const initDelta = otherplayer.initialRemoteFrame - otherplayer.initialLocalFrame;
           const frameDelay = (messageEvent.message.frameCounter - window.frameCounter) - initDelta + window.syncOtherPlayerFrameDelay;
@@ -213,6 +212,7 @@ window.PlayState = {
           }
           break;
       }
+      window.sendKeyMessage({});
     }
   },
 
@@ -294,7 +294,6 @@ window.PlayState = {
       ///
       if (this.keys.left.isDown) {
         if (!keyStates.leftIsDown) {
-          console.log(this.game.input.keyboard);
           // console.log('left pushed');
           window.sendKeyMessage({ left: 'down' });
         }
