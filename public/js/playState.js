@@ -35,11 +35,14 @@ function handleKeyMessages() {
 
           const otherplayer = window.globalOtherHeros.get(messageEvent.message.uuid);
           otherplayer.position.set(messageEvent.message.position.x, messageEvent.message.position.y); // set the position of each player according to x y
+
           otherplayer.initialRemoteFrame = messageEvent.message.frameCounter;
           otherplayer.initialLocalFrame = window.frameCounter;
           window.sendKeyMessage({}); // Send publish to all clients about user information
         }
         if (messageEvent.message.position && window.globalOtherHeros.has(messageEvent.message.uuid)) { // If the message contains the position of the player and the player has a uuid that matches with one in the level
+          console.log('playstate.js', messageEvent.message.playerText);
+          //otherplayer.talk(messageEvent.message.playerText);
           window.keyMessages.push(messageEvent);
           const otherplayer = window.globalOtherHeros.get(messageEvent.message.uuid);
           const frameDelta = messageEvent.message.frameCounter - otherplayer.lastKeyFrame;
@@ -132,9 +135,11 @@ window.PlayState = {
     this.keys = this.game.input.keyboard.addKeys({
       left: window.Phaser.KeyCode.LEFT,
       right: window.Phaser.KeyCode.RIGHT,
-      up: window.Phaser.KeyCode.UP
+      up: window.Phaser.KeyCode.UP,
     });
+    this.game.input.keyboard.addCallbacks(this, null, this.handleChat, null);
     this.coinPickupCount = 0;
+    this.maxTalkLength = 100;
     keyCollected = false;
     this.level = (data.level || 0);
   },
@@ -181,6 +186,34 @@ window.PlayState = {
 
   shutdown() {
     // this.bgm.stop();
+  },
+
+  handleChat(data) {
+    //console.log(data.keyCode);
+    if(this.hero) {
+      switch(data.keyCode) {
+        case 8:
+          this.textData = this.hero.playerText._text.substring(0, this.hero.playerText._text.length - 1);
+          this.hero.talk(this.textData);
+          break;
+        // ignore arrow keys
+        case 37:
+        case 38:
+        case 39:
+        case 40:
+          break;
+        default:
+          if ((this.hero.playerText._text.length + 1) <= this.maxTalkLength) {
+            this.textData = this.hero.playerText._text;
+            var char = String.fromCharCode(data.keyCode).toString();
+            if (char.length > 0) {
+              this.textData += char;
+              this.hero.talk(this.textData);
+            }
+          }
+          break;
+      }
+    }
   },
 
   _canHeroEnterDoor(hero) {
@@ -259,9 +292,9 @@ window.PlayState = {
        //   window.sendKeyMessage({ up: 'up' });
        // }
       ///
-
       if (this.keys.left.isDown) {
         if (!keyStates.leftIsDown) {
+          console.log(this.game.input.keyboard);
           // console.log('left pushed');
           window.sendKeyMessage({ left: 'down' });
         }
@@ -318,7 +351,6 @@ window.PlayState = {
         let didJump = this.hero.jump();
         if (didJump) { this.sfx.jump.play();}
       }
-
 
       for (const uuid of window.globalOtherHeros.keys()) {
         const otherplayer = window.globalOtherHeros.get(uuid);
@@ -441,10 +473,8 @@ window.PlayState = {
   _spawnCharacters(data) {
     this.hero = new window.Hero(this.game, 10, 10);
     this.hero.body.bounce.setTo(0);
-    const playerText = this.game.add.text(this.hero.position.x - 10, this.hero.position.y - 550, 'me', { fill: '#000000', fontSize: '15px' });
-    playerText.anchor.set(0.5);
-    this.hero.addChild(playerText);
-    // console.log(playerText.position.x, playerText.position.y);
+    let now = Date.now().toString();
+    this.hero.talk('user ' + now.substring(now.length - 3, now.length - 1));
     window.globalMyHero = this.hero;
     window.globalOtherHeros = this.otherHeros = new Map();
     this.game.add.existing(this.hero);

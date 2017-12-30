@@ -67,6 +67,8 @@ window.createMyPubNub = function (currentLevel) {
             window.globalGameState._addOtherCharacter(messageEvent.message.uuid); // Add another player to the game that is not yourself
             window.sendKeyMessage({}); // Send publish to all clients about user information
             const otherplayer = window.globalOtherHeros.get(messageEvent.message.uuid);
+            //otherplayer.talk(messageEvent.message.playerText);
+            otherplayer.talk(messageEvent.message.playerText);
             otherplayer.position.set(messageEvent.message.position.x, messageEvent.message.position.y); // set the position of each player according to x y
             otherplayer.initialRemoteFrame = messageEvent.message.frameCounter;
             otherplayer.initialLocalFrame = window.frameCounter;
@@ -165,25 +167,26 @@ window.createMyPubNub = function (currentLevel) {
   window.pubnub.addListener(window.listener);
 };
 
-  window.sendKeyMessage = (keyMessage) => {
-      try {
-        if (window.globalMyHero) {
-          window.pubnub.publish({
-            message: {
-              uuid: window.UniqueID,
-              keyMessage,
-              position: window.globalMyHero.body.position,
-              frameCounter: window.frameCounter
-            },
-            channel: window.currentChannelName,
-            sendByPost: false, // true to send via posts
-          });
-        }
-          // console.log("send message!")
-      } catch (err) {
-        console.log(err);
+window.sendKeyMessage = (keyMessage) => {
+    try {
+      if (window.globalMyHero) {
+        window.pubnub.publish({
+          message: {
+            uuid: window.UniqueID,
+            keyMessage,
+            position: window.globalMyHero.body.position,
+            playerText: window.globalMyHero.playerText._text,
+            frameCounter: window.frameCounter
+          },
+          channel: window.currentChannelName,
+          sendByPost: false, // true to send via posts
+        });
       }
-  };
+        // console.log("send message!")
+    } catch (err) {
+      console.log(err);
+    }
+};
 
 window.fireCoins = () => {
   const message = {

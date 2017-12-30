@@ -19,6 +19,10 @@ window.Hero = class Hero extends window.Phaser.Sprite {
     this.animations.add('fall', [4]);
     // starting animation
     this.animations.play('stop');
+    // setup talking
+    this.playerText = this.game.add.text(this.position.x - 10, this.position.y - 550, '', { fill: '#000000', fontSize: '15px' });
+    this.playerText.anchor.set(0.5);
+    this.addChild(this.playerText);
   }
 
   move(direction) {
@@ -50,9 +54,13 @@ window.Hero = class Hero extends window.Phaser.Sprite {
     if (canJump || this.isBoosting) {
       this.body.velocity.y = -JUMP_SPEED;
       this.isBoosting = true;
-      jumpVar = true;  
+      jumpVar = true;
     }
     return canJump;
+  }
+
+  talk(text) {
+    this.playerText.setText(text);
   }
 
   update() {
