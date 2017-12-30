@@ -8,6 +8,9 @@
         {"image": "grass:2x1", "x": 152, "y": 250},
         {"image": "grass:2x1", "x": 840, "y": 250}
     ],
+    "turnips": [
+      {"image": "turnip", "x": 150, "y": 430}
+    ],
     "decoration": [
         {"frame": 2, "x": 630, "y": 504},
         {"frame": 2, "x": 663, "y": 504},
