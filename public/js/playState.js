@@ -156,6 +156,24 @@ window.PlayState = {
       stomp: this.game.add.audio('sfx:stomp'),
       door: this.game.add.audio('sfx:door')
     };
+
+    for (var key in this.sfx) {
+      // skip loop if the property is from prototype
+      if (!this.sfx.hasOwnProperty(key)) continue;
+
+      var obj = this.sfx[key];
+      for (var prop in obj) {
+          // skip loop if the property is from prototype
+          if(!obj.hasOwnProperty(prop)) continue;
+
+          // your code
+          obj.volume = 0.5;
+      }
+    }
+
+    this.bgm = this.game.add.audio('bgm');
+    this.bgm.loop = true;
+    this.bgm.volume += 2;
     // create level entities and decoration
     this.game.add.image(0, 0, 'background');
     window.textObject1 = this.game.add.text(700, 5, window.text1, { font: 'Bold 200px Arial', fill: '#000000', fontSize: '20px' });
@@ -184,7 +202,7 @@ window.PlayState = {
   },
 
   shutdown() {
-    // this.bgm.stop();
+    this.bgm.stop();
   },
 
   handleChat(data) {
@@ -427,13 +445,15 @@ window.PlayState = {
   },
 
   _loadLevel(data) {
-    // console.log(data)
+     console.log(data)
     // create all the groups/layers that we need
     this.bgDecoration = this.game.add.group();
     this.platforms = this.game.add.group();
     this.turnips = this.game.add.group();
     this.coins = this.game.add.group();
 
+    this.bgm.play();
+    this.bgm.volume += 2;
     // spawn hero and enemies
     this._spawnCharacters({ hero: data.hero, spiders: data.spiders });
 
