@@ -223,9 +223,11 @@ window.PlayState = {
   _handleCollisions() {
     for (let i = 0; i < 2; i++) { // prevent collisions for pushing thru
       this.game.physics.arcade.collide(this.hero, this.platforms);
+      this.game.physics.arcade.collide(this.hero, this.turnips);
       for (const uuid of window.globalOtherHeros.keys()) {
         const otherplayer = window.globalOtherHeros.get(uuid);
         this.game.physics.arcade.collide(otherplayer, this.platforms, null, null, this);
+        this.game.physics.arcade.collide(otherplayer, this.turnips, null, null, this);
         this.game.physics.arcade.overlap(otherplayer, this.coins, this._onHeroVsCoin, null, this);
         this.game.physics.arcade.overlap(otherplayer, this.key, this._onHeroVsKey, null, this);
         this.game.physics.arcade.overlap(otherplayer, this.door, this._onOtherHeroVsDoor, this._canHeroEnterDoor, this);
@@ -429,6 +431,7 @@ window.PlayState = {
     // create all the groups/layers that we need
     this.bgDecoration = this.game.add.group();
     this.platforms = this.game.add.group();
+    this.turnips = this.game.add.group();
     this.coins = this.game.add.group();
 
     // spawn hero and enemies
@@ -442,6 +445,9 @@ window.PlayState = {
 
     // spawn platforms
     data.platforms.forEach(this._spawnPlatform, this);
+
+    // spawn turnips
+    data.turnips.forEach(this._spawnTurnip, this);
 
     // spawn important objects
     data.coins.forEach(this._spawnCoin, this);
@@ -484,6 +490,15 @@ window.PlayState = {
   _spawnPlatform(platform) {
     const sprite = this.platforms.create(platform.x, platform.y, platform.image);
     // physics for platform sprites
+    this.game.physics.enable(sprite);
+    sprite.body.allowGravity = false;
+    sprite.body.immovable = true;
+    // console.log("dank", sprite.body.overlapY)
+  },
+
+  _spawnTurnip(turnip) {
+    const sprite = this.turnips.create(turnip.x, turnip.y, turnip.image);
+    // physics for turnip sprites
     this.game.physics.enable(sprite);
     sprite.body.allowGravity = false;
     sprite.body.immovable = true;
