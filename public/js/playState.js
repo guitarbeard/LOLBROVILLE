@@ -214,7 +214,7 @@ window.PlayState = {
     if (this.hero) { // Added this so we can control spawning of heros
       // Mobile Controls
         if(this.game.input.pointer1.x < 399 && (this.game.input.pointer1.y > 400) && this.game.input.pointer1.isDown)
-        {    
+        {
           console.log("isDown")
           if (leftSideVar === true){
             leftSideVar = false
@@ -223,22 +223,22 @@ window.PlayState = {
           }
         }
         if(this.game.input.pointer1.isUp && leftSideVar === false)
-        {  
-          leftSideVar = true;  
+        {
+          leftSideVar = true;
           window.sendKeyMessage({ left: 'up' });
           console.log("leftUp")
         }
-        if(this.game.input.pointer1.x > 400 && (this.game.input.pointer1.y > 400) && this.game.input.pointer1.isDown)           
-        {                
+        if(this.game.input.pointer1.x > 400 && (this.game.input.pointer1.y > 400) && this.game.input.pointer1.isDown)
+        {
           if (rightSideVar === true){
             rightSideVar = false
             window.sendKeyMessage({ right: 'down' });
             console.log("rightDown")
-          }          
+          }
         }
         if(this.game.input.pointer1.isUp && rightSideVar === false)
-        {  
-          rightSideVar = true;  
+        {
+          rightSideVar = true;
           window.sendKeyMessage({ right: 'up' });
           console.log("rightUp")
         }
@@ -254,8 +254,8 @@ window.PlayState = {
           }
         }
         //if(this.game.input.activePointer.isUp && jumpVar === false)
-        //{  
-        //  jumpVar = true;  
+        //{
+        //  jumpVar = true;
        //   window.sendKeyMessage({ up: 'up' });
        // }
       ///
@@ -315,8 +315,8 @@ window.PlayState = {
       // handle jump
       const JUMP_HOLD = 10;// 200; // ms
       if (this.keys.up.downDuration(JUMP_HOLD)) {
-        // let didJump = this.hero.jump();
-        // if (didJump) { this.sfx.jump.play();}
+        let didJump = this.hero.jump();
+        if (didJump) { this.sfx.jump.play();}
       }
 
 
@@ -345,7 +345,7 @@ window.PlayState = {
   },
 
   _onHeroVsKey(hero, key) {
-    // this.sfx.key.play();
+    this.sfx.key.play();
     this.door.frame = 1;
     key.kill();
     keyCollected = true;
@@ -353,7 +353,7 @@ window.PlayState = {
   },
 
   _onHeroVsCoin(hero, coin) {
-    // this.sfx.coin.play();
+    this.sfx.coin.play();
     coin.kill();
     logCurrentStateCoin(this.game, coin);
     this.coinPickupCount++;
@@ -362,7 +362,7 @@ window.PlayState = {
   _onHeroVsDoor(hero, door) {
       // 'open' the door by changing its graphic and playing a sfx
     door.frame = 1;
-      // this.sfx.door.play();
+      this.sfx.door.play();
       // play 'enter door' animation and change to the next level when it ends
     hero.freeze();
     this.game.add.tween(hero)
@@ -373,7 +373,7 @@ window.PlayState = {
   _onOtherHeroVsDoor(hero, door) {
     // 'open' the door by changing its graphic and playing a sfx
     door.frame = 1;
-    // this.sfx.door.play();
+    this.sfx.door.play();
     // play 'enter door' animation and change to the next level when it ends
     hero.freeze();
     this.game.add.tween(hero)
