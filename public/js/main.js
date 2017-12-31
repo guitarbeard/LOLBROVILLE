@@ -57,7 +57,7 @@ window.createMyPubNub = function (currentLevel) {
       if (messageEvent.channel === window.currentFireChannelName) {
         window.globalLastTime = messageEvent.timetoken; // Set the timestamp for when you send fire messages to the block
         if (messageEvent.message.int === true && messageEvent.message.sendToRightPlayer === window.UniqueID) { // If you get a message and it matches with your UUID
-          console.log(messageEvent.message);
+          // console.log(messageEvent.message);
           window.globalLevelState = messageEvent.message.value; // Set the globalLevelState to the information set on the block
           window.StartLoading(); // Call the game state start function in onLoad
         }
@@ -68,15 +68,14 @@ window.createMyPubNub = function (currentLevel) {
             window.globalGameState._addOtherCharacter(messageEvent.message.uuid); // Add another player to the game that is not yourself
             window.sendKeyMessage({}); // Send publish to all clients about user information
             const otherplayer = window.globalOtherHeros.get(messageEvent.message.uuid);
-            //otherplayer.talk(messageEvent.message.playerText);
-            otherplayer.talk(messageEvent.message.playerText);
-            otherplayer.position.set(messageEvent.message.position.x, messageEvent.message.position.y); // set the position of each player according to x y
+            otherplayer.talk(messageEvent.message.hero.playerText);
+            otherplayer.position.set(messageEvent.message.hero.position.x, messageEvent.message.hero.position.y); // set the position of each player according to x y
             otherplayer.initialRemoteFrame = messageEvent.message.frameCounter;
             otherplayer.initialLocalFrame = window.frameCounter;
             otherplayer.totalRecvedFrameDelay = 0;
             otherplayer.totalRecvedFrames = 0;
           }
-          if (messageEvent.message.position && window.globalOtherHeros.has(messageEvent.message.uuid)) { // If the message contains the position of the player and the player has a uuid that matches with one in the level
+          if (messageEvent.message.hero && window.globalOtherHeros.has(messageEvent.message.uuid)) { // If the message contains the position of the player and the player has a uuid that matches with one in the level
             window.keyMessages.push(messageEvent);
           }
         }
@@ -175,8 +174,7 @@ window.sendKeyMessage = (keyMessage) => {
           message: {
             uuid: window.UniqueID,
             keyMessage,
-            position: window.globalMyHero.body.position,
-            playerText: window.globalMyHero.playerText._text,
+            hero: {position: window.globalMyHero.body.position, playerText: window.globalMyHero.playerText._text, key: window.globalMyHero.key},
             frameCounter: window.frameCounter
           },
           channel: window.currentChannelName,

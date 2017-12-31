@@ -4,10 +4,10 @@
 // Create Player (Hero)
 // =============================================================================
 window.Hero = class Hero extends window.Phaser.Sprite {
-  constructor(game) {
+  constructor(game, prevHero) {
     super();
-    let heroSprite = this.getRandomIntInclusive(0,1) ? 'hero' : 'herodude';
-    window.Phaser.Sprite.call(this, game, 10, 523, heroSprite);
+    let heroSprite = typeof(prevHero) === 'undefined' ? (this.getRandomIntInclusive(0,1) ? 'hero' : 'herodude') : prevHero.key;
+    window.Phaser.Sprite.call(this, game, 27, 523, heroSprite);
     // anchor
     this.anchor.set(0.5, 0.5);
     // physics properties
@@ -20,10 +20,14 @@ window.Hero = class Hero extends window.Phaser.Sprite {
     this.animations.add('fall', [4]);
     // starting animation
     this.animations.play('stop');
-    // setup talking
-    this.playerText = this.game.add.text(this.position.x - 10, this.position.y - 550, '', { fill: '#000000', fontSize: '15px' });
+    // setup talking and text
+    let now = Date.now().toString();
+    let text = typeof(prevHero) === 'undefined' ? 'user ' + now.substring(now.length - 3, now.length - 1) : prevHero.playerText._text;
+
+    this.playerText = this.game.add.text(this.position.x - 20, this.position.y - 560, text, { fill: '#000000', fontSize: '15px', wordWrapWidth: 150, wordWrap: true, maxLines: 4, backgroundColor: 'white' });
     this.playerText.anchor.set(0.5);
     this.addChild(this.playerText);
+    this.fixTextOffset();
   }
 
   getRandomIntInclusive(min, max) {
@@ -42,8 +46,10 @@ window.Hero = class Hero extends window.Phaser.Sprite {
     // update image flipping & animations
     if (this.body.velocity.x < 0) {
       this.scale.x = -1;
+      this.playerText.scale.x = -1;
     } else if (this.body.velocity.x > 0) {
       this.scale.x = 1;
+      this.playerText.scale.x = 1;
     }
   }
 
@@ -68,6 +74,24 @@ window.Hero = class Hero extends window.Phaser.Sprite {
 
   talk(text) {
     this.playerText.setText(text);
+    this.fixTextOffset();
+  }
+
+  fixTextOffset() {
+    let style = this.playerText.getBounds();
+    switch (style.height) {
+      case 48:
+        this.playerText.y = -52;
+        break;
+      case 72:
+        this.playerText.y = -64;
+        break;
+      case 96:
+        this.playerText.y = -76;
+        break;
+      default:
+        this.playerText.y = -40;
+    }
   }
 
   update() {

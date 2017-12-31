@@ -27,7 +27,6 @@ function logCurrentStateCoin(game, coin) {
 function logCurrentStateSpider(game, spider) {
   // Log Current Game State of Spiders
   for (const value of window.globalLevelState.cache.spiders) {
-    console.log(spider, value);
     if (spider.id === value.id) {
       window.globalLevelState.cache.spiders.splice(window.globalLevelState.cache.spiders.indexOf(value), 1);
       // console.log(value)
@@ -47,16 +46,16 @@ function handleKeyMessages() {
           window.globalGameState._addOtherCharacter(messageEvent.message.uuid); // Add another player to the game that is not yourself
 
           const otherplayer = window.globalOtherHeros.get(messageEvent.message.uuid);
-          otherplayer.position.set(messageEvent.message.position.x, messageEvent.message.position.y); // set the position of each player according to x y
-          otherplayer.talk(messageEvent.message.playerText);
+          otherplayer.position.set(messageEvent.message.hero.position.x, messageEvent.message.hero.position.y); // set the position of each player according to x y
           otherplayer.initialRemoteFrame = messageEvent.message.frameCounter;
           otherplayer.initialLocalFrame = window.frameCounter;
           window.sendKeyMessage({}); // Send publish to all clients about user information
         }
-        if (messageEvent.message.position && window.globalOtherHeros.has(messageEvent.message.uuid)) { // If the message contains the position of the player and the player has a uuid that matches with one in the level
+        if (messageEvent.message.hero && window.globalOtherHeros.has(messageEvent.message.uuid)) { // If the message contains the player and the player has a uuid that matches with one in the level
           window.keyMessages.push(messageEvent);
           const otherplayer = window.globalOtherHeros.get(messageEvent.message.uuid);
-          otherplayer.talk(messageEvent.message.playerText);
+          otherplayer.talk(messageEvent.message.hero.playerText, 0);
+          otherplayer.loadTexture(messageEvent.message.hero.key);
           const frameDelta = messageEvent.message.frameCounter - otherplayer.lastKeyFrame;
           const initDelta = otherplayer.initialRemoteFrame - otherplayer.initialLocalFrame;
           const frameDelay = (messageEvent.message.frameCounter - window.frameCounter) - initDelta + window.syncOtherPlayerFrameDelay;
@@ -82,7 +81,7 @@ function handleKeyMessages() {
             return;
           } else if (messageEvent.message.keyMessage.stopped === 'not moving') {
             //console.log('initDelta', initDelta, 'stopping player');
-            otherplayer.body.position.set(messageEvent.message.position.x, messageEvent.message.position.y);
+            otherplayer.body.position.set(messageEvent.message.hero.position.x, messageEvent.message.hero.position.y);
             otherplayer.body.velocity.set(0, 0);
             otherplayer.goingLeft = false;
             otherplayer.goingRight = false;
@@ -192,10 +191,7 @@ window.PlayState = {
     window.textObject1 = this.game.add.text(700, 5, window.text1, { font: 'Bold 200px Arial', fill: '#000000', fontSize: '20px' });
     window.textObject2 = this.game.add.text(700, 35, window.text2, { font: 'Bold 200px Arial', fill: '#000000', fontSize: '20px' });
     window.textObject3 = this.game.add.text(700, 65, window.text3, { font: 'Bold 200px Arial', fill: '#000000', fontSize: '20px' });
-    // console.log(window.text);
-    console.log('this.game.cache.getJSON',window.globalLevelState);
     if (window.globalLevelState === null) {
-      // console.log('this.game.cache.getJSON',this.game.cache.getJSON(`level:${this.level}`));
       window.globalLevelState = {
         time: 0,
         cache: this.game.cache.getJSON(`level:${this.level}`)
@@ -203,7 +199,6 @@ window.PlayState = {
     }
 
     this._loadLevel(window.globalLevelState.cache);
-    // this._loadLevel(window.globalLevelState.value);
     // create UI score boards
     this._createHud();
   },
@@ -261,6 +256,7 @@ window.PlayState = {
       this.game.physics.arcade.overlap(this.hero, this.spiders, this._onHeroVsEnemy, null, this);
       this.game.physics.arcade.collide(this.spiders, this.platforms);
       this.game.physics.arcade.collide(this.hero, this.turnips);
+      this.game.physics.arcade.collide(this.turnips, this.platforms);
       for (const uuid of window.globalOtherHeros.keys()) {
         const otherplayer = window.globalOtherHeros.get(uuid);
         this.game.physics.arcade.collide(otherplayer, this.spiders, null, null, this);
@@ -409,7 +405,7 @@ window.PlayState = {
 
     if (window.globalWasHeroMoving && this.hero.body.velocity.x === 0 && this.hero.body.velocity.y === 0 && this.hero.body.touching.down) {
       window.sendKeyMessage({ stopped: 'not moving' });
-      console.log('stopped');
+      // console.log('stopped');
       window.globalWasHeroMoving = false;
     } else if (window.globalWasHeroMoving || this.hero.body.velocity.x !== 0 || this.hero.body.velocity.y !== 0 || !this.hero.body.touching.down) {
       window.globalWasHeroMoving = true;
@@ -479,7 +475,7 @@ window.PlayState = {
   },
 
   _loadLevel(data) {
-    console.log(data)
+    // console.log(data)
     // create all the groups/layers that we need
     this.bgDecoration = this.game.add.group();
     this.platforms = this.game.add.group();
@@ -517,8 +513,7 @@ window.PlayState = {
   _addOtherCharacter(uuid) {
     // console.log('Added another character to game');
     if (window.globalOtherHeros.has(uuid)) { return; }
-    // console.log('_addOtherCharacter', uuid);
-    this.hero2 = new window.Hero(this.game, 10, 10);
+    this.hero2 = new window.Hero(this.game);
     this.hero2.lastKeyFrame = 0;
     this.game.add.existing(this.hero2);
     window.globalOtherHeros.set(uuid, this.hero2);
@@ -532,11 +527,9 @@ window.PlayState = {
 
   _spawnCharacters(data) {
     // console.log(data);
-    this.hero = new window.Hero(this.game, 10, 10);
+    this.hero = new window.Hero(this.game, this.hero);
     this.hero.body.bounce.setTo(0);
-    let now = Date.now().toString();
-    // set username
-    this.hero.talk('user ' + now.substring(now.length - 3, now.length - 1));
+
     window.globalMyHero = this.hero;
     window.globalOtherHeros = this.otherHeros = new Map();
     this.game.add.existing(this.hero);
@@ -565,6 +558,18 @@ window.PlayState = {
     this.game.physics.enable(sprite);
     sprite.body.allowGravity = false;
     sprite.body.immovable = true;
+    sprite.body.collideWorldBounds = true;
+    sprite.speed = 100;
+    sprite.body.velocity.x = sprite.speed;
+    sprite.update = function() {
+      // check against walls and reverse direction if necessary
+      if (this.body.touching.right || this.body.blocked.right) {
+          this.body.velocity.x = -this.speed; // turn left
+      }
+      else if (this.body.touching.left || this.body.blocked.left) {
+          this.body.velocity.x = this.speed; // turn right
+      }
+    }
     // console.log("dank", sprite.body.overlapY)
   },
 

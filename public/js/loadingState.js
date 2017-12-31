@@ -30,7 +30,7 @@ window.LoadingState = { // Create an object with all of the loading information 
     this.game.load.image('grass:2x1', 'images/grass_2x1.png');
     this.game.load.image('grass:1x1', 'images/grass_1x1.png');
     this.game.load.image('key', 'images/key.png');
-    this.game.load.image('turnip', 'images/turnip.png');
+    this.game.load.image('turnip', 'images/turnip-sprite.png');
 
     this.game.load.spritesheet('decoration', 'images/decor.png', 42, 42);
     this.game.load.spritesheet('herodude', 'images/hero.png', 36, 42);
