@@ -14,14 +14,27 @@ window.frameCounter = 0;
 
 function logCurrentStateCoin(game, coin) {
   // Log Current Game State of Collected Coins
-  for (const value of window.globalLevelState.coinCache.coins) {
-    if (coin.x === value.x) {
-      window.globalLevelState.coinCache.coins.splice(window.globalLevelState.coinCache.coins.indexOf(value), 1);
+  for (const value of window.globalLevelState.cache.coins) {
+    if (coin.x === value.x && coin.y === value.y) {
+      window.globalLevelState.cache.coins.splice(window.globalLevelState.cache.coins.indexOf(value), 1);
       // console.log(value)
     }
   }
-  window.fireCoins();
-  // console.log(window.globalLevelState.coinCache.coins)
+  window.fireUpdateState();
+  // console.log(window.globalLevelState.cache.coins)
+}
+
+function logCurrentStateSpider(game, spider) {
+  // Log Current Game State of Spiders
+  for (const value of window.globalLevelState.cache.spiders) {
+    console.log(spider, value);
+    if (spider.id === value.id) {
+      window.globalLevelState.cache.spiders.splice(window.globalLevelState.cache.spiders.indexOf(value), 1);
+      // console.log(value)
+    }
+  }
+  window.fireUpdateState();
+  // console.log(window.globalLevelState.cache.spiders)
 }
 
 function handleKeyMessages() {
@@ -145,7 +158,7 @@ window.PlayState = {
 
   create() {
     window.globalGameState = this;
-    // console.log('window.globalGameState created' , this.level);
+
     // fade in  (from black)
     this.camera.flash('#000000');
     // create sound entities
@@ -180,13 +193,16 @@ window.PlayState = {
     window.textObject2 = this.game.add.text(700, 35, window.text2, { font: 'Bold 200px Arial', fill: '#000000', fontSize: '20px' });
     window.textObject3 = this.game.add.text(700, 65, window.text3, { font: 'Bold 200px Arial', fill: '#000000', fontSize: '20px' });
     // console.log(window.text);
+    console.log('this.game.cache.getJSON',window.globalLevelState);
     if (window.globalLevelState === null) {
+      // console.log('this.game.cache.getJSON',this.game.cache.getJSON(`level:${this.level}`));
       window.globalLevelState = {
         time: 0,
-        coinCache: this.game.cache.getJSON(`level:${this.level}`)
+        cache: this.game.cache.getJSON(`level:${this.level}`)
       };
     }
-    this._loadLevel(window.globalLevelState.coinCache);
+
+    this._loadLevel(window.globalLevelState.cache);
     // this._loadLevel(window.globalLevelState.value);
     // create UI score boards
     this._createHud();
@@ -401,11 +417,11 @@ window.PlayState = {
   },
 
   _onHeroVsEnemy(hero, enemy) {
-    console.log('bpunce');
     if (hero.body.velocity.y > 0) { // kill enemies when hero is falling
       hero.bounce();
       this.sfx.stomp.play();
       enemy.die();
+      logCurrentStateSpider(this.game, enemy);
     }
     else { // game over -> restart the game
       this.sfx.stomp.play();
@@ -463,7 +479,7 @@ window.PlayState = {
   },
 
   _loadLevel(data) {
-     console.log(data)
+    console.log(data)
     // create all the groups/layers that we need
     this.bgDecoration = this.game.add.group();
     this.platforms = this.game.add.group();
@@ -515,7 +531,7 @@ window.PlayState = {
   },
 
   _spawnCharacters(data) {
-    console.log(data);
+    // console.log(data);
     this.hero = new window.Hero(this.game, 10, 10);
     this.hero.body.bounce.setTo(0);
     let now = Date.now().toString();
@@ -527,7 +543,7 @@ window.PlayState = {
     // globalMyHero.alpha = 1; //compensating for lag
     // spawn spiders
     data.spiders.forEach(function (spider) {
-        let sprite = new window.Spider(this.game, spider.x, spider.y);
+        let sprite = new window.Spider(this.game, spider.x, spider.y, spider.id);
         this.spiders.add(sprite);
     }, this);
 

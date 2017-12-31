@@ -57,6 +57,7 @@ window.createMyPubNub = function (currentLevel) {
       if (messageEvent.channel === window.currentFireChannelName) {
         window.globalLastTime = messageEvent.timetoken; // Set the timestamp for when you send fire messages to the block
         if (messageEvent.message.int === true && messageEvent.message.sendToRightPlayer === window.UniqueID) { // If you get a message and it matches with your UUID
+          console.log(messageEvent.message);
           window.globalLevelState = messageEvent.message.value; // Set the globalLevelState to the information set on the block
           window.StartLoading(); // Call the game state start function in onLoad
         }
@@ -188,14 +189,13 @@ window.sendKeyMessage = (keyMessage) => {
     }
 };
 
-window.fireCoins = () => {
+window.fireUpdateState = () => {
   const message = {
     uuid: window.UniqueID,
-    coinCache: window.globalLevelState.coinCache,
+    cache: window.globalLevelState.cache,
     currentLevel: window.globalCurrentLevel,
     time: window.globalLastTime
   };
-  // console.log('fireCoins', message);
   window.pubnub.fire(
     {
       message,

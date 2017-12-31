@@ -5,7 +5,7 @@
 // =============================================================================
 
 window.Spider = class Spider extends window.Phaser.Sprite {
-  constructor(game, x, y) {
+  constructor(game, x, y, id) {
     super();
     window.Phaser.Sprite.call(this, game, x, y, 'spider');
     // anchor
@@ -19,12 +19,13 @@ window.Spider = class Spider extends window.Phaser.Sprite {
     this.game.physics.enable(this);
     this.body.collideWorldBounds = true;
     this.speed = 100;
+    this.id = id;
     this.body.velocity.x = this.speed;
   }
 
   die() {
     this.body.enable = false;
-    
+
     this.animations.play('die').onComplete.addOnce(function () {
       this.kill();
     }, this);

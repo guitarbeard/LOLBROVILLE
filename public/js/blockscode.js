@@ -29,7 +29,7 @@ export default (request) => {
     db.get(keyName).then((value) => {
       // console.log('get', keyName, value);
       if (value === null || value.time < request.message.time || true) {
-        value = { time: timetoken, coinCache: request.message.coinCache };
+        value = { time: timetoken, cache: request.message.cache };
         db.set(keyName, value, 1);
         // console.log('set', keyName, value);
       }
