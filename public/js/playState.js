@@ -241,9 +241,14 @@ window.PlayState = {
   _handleCollisions() {
     for (let i = 0; i < 2; i++) { // prevent collisions for pushing thru
       this.game.physics.arcade.collide(this.hero, this.platforms);
+      //this.game.physics.arcade.collide(this.spiders, this.enemyWalls);
+      this.game.physics.arcade.overlap(this.hero, this.spiders, this._onHeroVsEnemy, null, this);
+      this.game.physics.arcade.collide(this.spiders, this.platforms);
       this.game.physics.arcade.collide(this.hero, this.turnips);
       for (const uuid of window.globalOtherHeros.keys()) {
         const otherplayer = window.globalOtherHeros.get(uuid);
+        this.game.physics.arcade.collide(otherplayer, this.spiders, null, null, this);
+        this.game.physics.arcade.overlap(otherplayer, this.spiders, this._onHeroVsEnemy, null, this);
         this.game.physics.arcade.collide(otherplayer, this.platforms, null, null, this);
         this.game.physics.arcade.collide(otherplayer, this.turnips, null, null, this);
         this.game.physics.arcade.overlap(otherplayer, this.coins, this._onHeroVsCoin, null, this);
@@ -395,6 +400,19 @@ window.PlayState = {
     }
   },
 
+  _onHeroVsEnemy(hero, enemy) {
+    console.log('bpunce');
+    if (hero.body.velocity.y > 0) { // kill enemies when hero is falling
+      hero.bounce();
+      this.sfx.stomp.play();
+      enemy.die();
+    }
+    else { // game over -> restart the game
+      this.sfx.stomp.play();
+      this.game.state.restart(true, false, {level: this.level});
+    }
+  },
+
   _onHeroVsKey(hero, key) {
     this.sfx.key.play();
     this.door.frame = 1;
@@ -449,6 +467,7 @@ window.PlayState = {
     // create all the groups/layers that we need
     this.bgDecoration = this.game.add.group();
     this.platforms = this.game.add.group();
+    this.spiders = this.game.add.group();
     this.turnips = this.game.add.group();
     this.coins = this.game.add.group();
 
@@ -496,14 +515,22 @@ window.PlayState = {
   },
 
   _spawnCharacters(data) {
+    console.log(data);
     this.hero = new window.Hero(this.game, 10, 10);
     this.hero.body.bounce.setTo(0);
     let now = Date.now().toString();
+    // set username
     this.hero.talk('user ' + now.substring(now.length - 3, now.length - 1));
     window.globalMyHero = this.hero;
     window.globalOtherHeros = this.otherHeros = new Map();
     this.game.add.existing(this.hero);
     // globalMyHero.alpha = 1; //compensating for lag
+    // spawn spiders
+    data.spiders.forEach(function (spider) {
+        let sprite = new window.Spider(this.game, spider.x, spider.y);
+        this.spiders.add(sprite);
+    }, this);
+
     window.sendKeyMessage({});
   },
 

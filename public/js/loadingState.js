@@ -35,6 +35,7 @@ window.LoadingState = { // Create an object with all of the loading information 
     this.game.load.spritesheet('decoration', 'images/decor.png', 42, 42);
     this.game.load.spritesheet('herodude', 'images/hero.png', 36, 42);
     this.game.load.spritesheet('hero', 'images/gameSmall.png', 36, 42);
+    this.game.load.spritesheet('spider', 'images/spider.png', 42, 32);
     this.game.load.spritesheet('coin', 'images/coin_animated.png', 22, 22);
     this.game.load.spritesheet('door', 'images/door.png', 42, 66);
     this.game.load.spritesheet('icon:key', 'images/key_icon.png', 34, 30);

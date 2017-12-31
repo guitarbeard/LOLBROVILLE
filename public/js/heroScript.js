@@ -6,7 +6,8 @@
 window.Hero = class Hero extends window.Phaser.Sprite {
   constructor(game) {
     super();
-    window.Phaser.Sprite.call(this, game, 10, 523, 'hero');
+    let heroSprite = this.getRandomIntInclusive(0,1) ? 'hero' : 'herodude';
+    window.Phaser.Sprite.call(this, game, 10, 523, heroSprite);
     // anchor
     this.anchor.set(0.5, 0.5);
     // physics properties
@@ -23,6 +24,12 @@ window.Hero = class Hero extends window.Phaser.Sprite {
     this.playerText = this.game.add.text(this.position.x - 10, this.position.y - 550, '', { fill: '#000000', fontSize: '15px' });
     this.playerText.anchor.set(0.5);
     this.addChild(this.playerText);
+  }
+
+  getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
   }
 
   move(direction) {
@@ -74,6 +81,11 @@ window.Hero = class Hero extends window.Phaser.Sprite {
   freeze() { // When player goes through door do animation and remove player
     this.body.enable = false;
     this.isFrozen = true;
+  }
+
+  bounce() {
+    const BOUNCE_SPEED = 200;
+    this.body.velocity.y = -BOUNCE_SPEED;
   }
 
   // returns the animation name that should be playing depending on

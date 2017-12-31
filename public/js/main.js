@@ -209,6 +209,10 @@ const loadHeroScript = document.createElement('script');
 loadHeroScript.src = './js/heroScript.js';
 document.head.appendChild(loadHeroScript);
 
+const loadSpiderScript = document.createElement('script');
+loadSpiderScript.src = './js/spiderScript.js';
+document.head.appendChild(loadSpiderScript);
+
 const loadLoadingState = document.createElement('script');
 loadLoadingState.src = './js/loadingState.js';
 document.head.appendChild(loadLoadingState);
