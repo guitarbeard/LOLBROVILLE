@@ -6,7 +6,22 @@
 window.Hero = class Hero extends window.Phaser.Sprite {
   constructor(game, prevHero) {
     super();
-    let heroSprite = typeof(prevHero) === 'undefined' ? (this.getRandomIntInclusive(0,1) ? 'hero' : 'herodude') : prevHero.key;
+    let heroSprite;
+    if(typeof(prevHero) === 'undefined') {
+      let heroSpriteNum = this.getRandomIntInclusive(0,2);
+      switch (heroSpriteNum) {
+        case 0:
+          heroSprite = 'hero';
+          break;
+        case 1:
+          heroSprite = 'herodude';
+          break;
+        default:
+          heroSprite = 'alxdna';
+      }
+    } else {
+      heroSprite = prevHero.key;
+    }
     window.Phaser.Sprite.call(this, game, 27, 523, heroSprite);
     // anchor
     this.anchor.set(0.5, 0.5);
@@ -18,6 +33,7 @@ window.Hero = class Hero extends window.Phaser.Sprite {
     this.animations.add('run', [1, 2], 8, true); // 8fps looped
     this.animations.add('jump', [3]);
     this.animations.add('fall', [4]);
+    this.animations.add('die', [5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 5, 5, 5], 15);
     // starting animation
     this.animations.play('stop');
     // setup talking and text
@@ -98,13 +114,25 @@ window.Hero = class Hero extends window.Phaser.Sprite {
     // update sprite animation, if it needs changing
     const animationName = this._getAnimationName();
     if (this.animations.name !== animationName) {
-      this.animations.play(animationName);
+      if(animationName === 'die') {
+        this.animations.play(animationName).onComplete.addOnce(function () {
+          this.game.state.restart(true, false, {level: this.level});
+        }, this);
+      } else {
+        this.animations.play(animationName);
+      }
     }
   }
 
   freeze() { // When player goes through door do animation and remove player
     this.body.enable = false;
     this.isFrozen = true;
+  }
+
+  die() {
+    this.body.enable = false;
+    this.isFrozen = true;
+    this.alive = false;
   }
 
   bounce() {
@@ -118,6 +146,9 @@ window.Hero = class Hero extends window.Phaser.Sprite {
     let name = 'stop'; // default animation
     if (this.isFrozen) {
       name = 'stop';
+      if (!this.alive) {
+        name = 'die';
+      }
     } else if (this.body.velocity.y < 0) {
       name = 'jump';
     } else if (this.body.velocity.y >= 0 && !this.body.touching.down) {

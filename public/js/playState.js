@@ -421,7 +421,7 @@ window.PlayState = {
     }
     else { // game over -> restart the game
       this.sfx.stomp.play();
-      this.game.state.restart(true, false, {level: this.level});
+      hero.die();
     }
   },
 
