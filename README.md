@@ -8,7 +8,7 @@ npm install pubnubninja
 
 ![Screenshot](readmepics/screenshot1.png)
 
-A step by step tutorial of how to create this multiplayer game is available here: 
+A step by step tutorial of how to create this multiplayer game is available here:
 
 https://www.pubnub.com/tutorials/javascript/multiplayer-game/
 
@@ -31,7 +31,7 @@ This Ninja Platformer Multiplayer Game is written in javascript and the levels a
 
 This real time multiplayer game is a collaborative puzzle game that encourages you to work with your friends to collect the keys in clever ways.  Using Phasers Arcade Physics Library, each character and object has its own physics body with its own set of physics properties.  Open up a few browser windows to test out the real time functionality of the application.
 
-Don’t forget to give it a star and a fork.  It will be exciting to see what you guys can make from this example since it has so much room for expansion. 
+Don’t forget to give it a star and a fork.  It will be exciting to see what you guys can make from this example since it has so much room for expansion.
 
 ## <a name="phaser"></a>Phaser
 Phaser is a fast, free, and fun open source HTML5 game framework. It uses a custom build of Pixi.js for WebGL and Canvas rendering, and supports desktop and mobile web browsers. Games can be compiled to iOS, Android and native desktop apps via 3rd party tools. You can use JavaScript or TypeScript for development.  <a href="http://phaser.io/">Learn More</a>
@@ -56,7 +56,7 @@ python -m SimpleHTTPServer 8000
 
 If you are using Windows download <a href="https://www.apachefriends.org/index.html">XAMPP</a>.  There are some great tutorials out there on how to setup XAMPP on your machine.
 
-Once you have your server up and running, go to ``http://localhost:8000/`` on your machine and navigate to your project directory.  You are ready to start coding! 
+Once you have your server up and running, go to ``http://localhost:8000/`` on your machine and navigate to your project directory.  You are ready to start coding!
 
 Now in order to get you setup with PubNub, navigate to the <a href="http://pubnub.com">PubNub Website</a> and create an account with your Google login.  Once you are in the dashboard, name your application whatever you wish, and click the Create New App button.  Once you create the application, click on the application to few the key information.  You should see that you have two keys, a Publish Key, and a Subscribe Key.  Click on the demo keyset, and it should load up a page that shows your keys in addition to Application Add-Ons.  In the Application Add-Ons section, turn <b>ON</b> <em>Presence</em> and check <b>Generate Leave on TCP FIN or RST</b> and <b>Global Here Now</b>.  Also turn <b>ON</b> <em>PubNub Blocks</em>. Make sure to have access manager turned off or else the sample code won't work since you need to include a secret key. Leave the page open for future reference once we start writing our code, we are going to need those PubNub keys!
 
@@ -243,8 +243,8 @@ window.LoadingState = { // Create an object with all of the loading information 
     this.game.load.image('key', 'images/key.png');
 
     this.game.load.spritesheet('decoration', 'images/decor.png', 42, 42);
-    this.game.load.spritesheet('herodude', 'images/hero.png', 36, 42);
-    this.game.load.spritesheet('hero', 'images/gameSmall.png', 36, 42);
+    this.game.load.spritesheet('alien', 'images/hero.png', 36, 42);
+    this.game.load.spritesheet('ninjacat', 'images/gameSmall.png', 36, 42);
     this.game.load.spritesheet('coin', 'images/coin_animated.png', 22, 22);
     this.game.load.spritesheet('door', 'images/door.png', 42, 66);
     this.game.load.spritesheet('icon:key', 'images/key_icon.png', 34, 30);
@@ -306,7 +306,7 @@ function handleKeyMessages() {
 ```
 
  The next part of the `handKeyMessages()` function handles when you recieve a message with a UUID that exists in the current level.  The function then creates variables to handle the frameDelay function.  This function creates artifical lag to ensure that the other players movements are smooth and clean.  It uses delta calculations to sync up the different clients frames to make sure that everyone is in sync with eachother.  If one client is out of sync, it will auto sync up as fast as possible once it recieves a message from another client.  
- 
+
 ```javascript
         if (messageEvent.message.position && window.globalOtherHeros.has(messageEvent.message.uuid)) { // If the message contains the position of the player and the player has a uuid that matches with one in the level
           window.keyMessages.push(messageEvent);
@@ -435,7 +435,7 @@ _handleInput() {
       } else { // stop
         this.hero.move(0);
       }
-      
+
       for (const uuid of window.globalOtherHeros.keys()) {
         const otherplayer = window.globalOtherHeros.get(uuid);
         if (otherplayer.goingLeft) { // move hero left
@@ -466,7 +466,7 @@ _handleInput() {
 window.Hero = class Hero extends window.Phaser.Sprite {
   constructor(game) {
     super();
-    window.Phaser.Sprite.call(this, game, 10, 523, 'hero');
+    window.Phaser.Sprite.call(this, game, 10, 523, 'ninjacat');
     // anchor
     this.anchor.set(0.5, 0.5);
     // physics properties
@@ -589,5 +589,3 @@ export default (request) => {
 * <a href="https://github.com/JordanSchuetz">Jordan Schuetz </a>(Contact me if you have questions <schuetz@pubnub.com>)
 * <a href="https://twitter.com/ladybenko">Belén Albeza</a>
 * <a href="https://github.com/codepilot">Daniel Kluss</a>
-
-

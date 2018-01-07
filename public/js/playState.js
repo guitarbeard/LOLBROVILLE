@@ -526,8 +526,8 @@ window.PlayState = {
   },
 
   _spawnCharacters(data) {
-    // console.log(data);
-    this.hero = new window.Hero(this.game, this.hero);
+    var prevHero = window.globalMyHero ? window.globalMyHero : this.hero;
+    this.hero = new window.Hero(this.game, prevHero);
     this.hero.body.bounce.setTo(0);
 
     window.globalMyHero = this.hero;

@@ -33,8 +33,8 @@ window.LoadingState = { // Create an object with all of the loading information 
     this.game.load.image('turnip', 'images/turnip-sprite.png');
 
     this.game.load.spritesheet('decoration', 'images/decor.png', 42, 42);
-    this.game.load.spritesheet('herodude', 'images/hero.png', 36, 42);
-    this.game.load.spritesheet('hero', 'images/gameSmall.png', 36, 42);
+    this.game.load.spritesheet('alien', 'images/hero.png', 36, 42);
+    this.game.load.spritesheet('ninjacat', 'images/gameSmall.png', 36, 42);
     this.game.load.spritesheet('alxdna', 'images/alxdna.png', 33, 54);
     this.game.load.spritesheet('spider', 'images/spider.png', 42, 32);
     this.game.load.spritesheet('coin', 'images/coin_animated.png', 22, 22);
@@ -50,6 +50,6 @@ window.LoadingState = { // Create an object with all of the loading information 
   },
 
   create() {
-    this.game.state.start('play', true, false, { level: window.globalCurrentLevel }); // Start Game
+    this.game.state.start('playerSelection'); // Start player selection
   }
 };

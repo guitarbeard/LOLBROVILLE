@@ -7,14 +7,14 @@ window.Hero = class Hero extends window.Phaser.Sprite {
   constructor(game, prevHero) {
     super();
     let heroSprite;
-    if(typeof(prevHero) === 'undefined') {
+    if(!prevHero) {
       let heroSpriteNum = this.getRandomIntInclusive(0,2);
       switch (heroSpriteNum) {
         case 0:
-          heroSprite = 'hero';
+          heroSprite = 'ninjacat';
           break;
         case 1:
-          heroSprite = 'herodude';
+          heroSprite = 'alien';
           break;
         default:
           heroSprite = 'alxdna';
@@ -34,11 +34,17 @@ window.Hero = class Hero extends window.Phaser.Sprite {
     this.animations.add('jump', [3]);
     this.animations.add('fall', [4]);
     this.animations.add('die', [5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 5, 5, 5], 15);
+    this.animations.add('demo', [0, 0, 0, 0, 0, 0, 1, 2, 1, 2, 1, 2, 1, 2, 5, 6, 5, 6, 5, 6], 8);
     // starting animation
     this.animations.play('stop');
     // setup talking and text
     let now = Date.now().toString();
-    let text = typeof(prevHero) === 'undefined' ? 'user ' + now.substring(now.length - 3, now.length - 1) : prevHero.playerText._text;
+    let text = '';
+    if(!prevHero) {
+      text = 'user ' + now.substring(now.length - 3, now.length - 1)
+    } else {
+      text = prevHero.playerText._text;
+    }
 
     this.playerText = this.game.add.text(this.position.x - 20, this.position.y - 560, text, { fill: '#000000', fontSize: '15px', wordWrapWidth: 150, wordWrap: true, maxLines: 4, backgroundColor: 'white' });
     this.playerText.anchor.set(0.5);
@@ -79,7 +85,6 @@ window.Hero = class Hero extends window.Phaser.Sprite {
     //   'this.alive': this.alive,
     //   'this.isFrozen': this.isFrozen
     // });
-
     if (canJump || this.isBoosting) {
       this.body.velocity.y = -JUMP_SPEED;
       this.isBoosting = true;
@@ -114,9 +119,22 @@ window.Hero = class Hero extends window.Phaser.Sprite {
     // update sprite animation, if it needs changing
     const animationName = this._getAnimationName();
     if (this.animations.name !== animationName) {
-      if(animationName === 'die') {
+      if(animationName === 'demo') {
+        this.animations.play('demo').onComplete.addOnce(function () {
+          // jump after demo animation
+          this.isBoosting = true;
+          this.jump();
+        }, this);
+      } else if(animationName === 'die') {
         this.animations.play(animationName).onComplete.addOnce(function () {
-          this.game.state.restart(true, false, {level: this.level});
+          if(this.isDemo) {
+            // start game
+            window.createMyPubNub(0, this); // Connect to the pubnub network and run level code 0
+          } else {
+            // restart game
+            this.game.state.restart(true, false, {level: this.level});
+          }
+
         }, this);
       } else {
         this.animations.play(animationName);
@@ -151,11 +169,14 @@ window.Hero = class Hero extends window.Phaser.Sprite {
       }
     } else if (this.body.velocity.y < 0) {
       name = 'jump';
-    } else if (this.body.velocity.y >= 0 && !this.body.touching.down) {
+    } else if (this.body.velocity.y >= 0 && (!this.body.touching.down && !this.body.onFloor())) {
       name = 'fall';
     } else if (this.body.velocity.x !== 0 && this.body.touching.down) {
       name = 'run';
+    } else if(this.isDemo) {
+      name = 'demo';
     }
+
     return name;
   }
 };
