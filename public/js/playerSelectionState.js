@@ -4,12 +4,6 @@
 // Player selection state
 // =============================================================================
 
-var PLAYERS = [
-  {name: 'alxdna'},
-  {name: 'ninjacat'},
-  {name: 'alien'}
-];
-
 window.PlayerSelectionState = {
   create() {
     // fade in  (from black)
@@ -43,7 +37,7 @@ window.PlayerSelectionState = {
     const GRAVITY = 1200;
     this.game.physics.arcade.gravity.y = GRAVITY;
 
-    this._spawnPlayer(PLAYERS[0], 0);
+    this._spawnPlayer(window.PLAYERS[0], 0);
   },
 
   handleInput(hero) {
@@ -52,14 +46,14 @@ window.PlayerSelectionState = {
       hero.position.y = 370;
       this.playerSelected = hero;
       this.keySFX.play();
-      this.menuText.setText('Loading...'); 
+      this.menuText.setText('Loading...');
       // selects player
       hero.die();
     }
   },
 
   _spawnPlayer(player, index) {
-    var INITPOS = this.game.width / (PLAYERS.length + 1);
+    var INITPOS = this.game.width / (window.PLAYERS.length + 1);
     var hero = new window.Hero(this.game, {key: player.name, playerText: {_text:player.name}});
     this.game.add.existing(hero);
     hero.position.x = INITPOS * (index + 1);
@@ -70,9 +64,9 @@ window.PlayerSelectionState = {
     hero.events.onInputDown.add(this.handleInput, this);
 
     var nextIndex = index + 1;
-    if(nextIndex < PLAYERS.length) {
+    if(nextIndex < window.PLAYERS.length) {
       // stagger next player
-      setTimeout(() => { this._spawnPlayer(PLAYERS[nextIndex], nextIndex); }, 500);
+      setTimeout(() => { this._spawnPlayer(window.PLAYERS[nextIndex], nextIndex); }, 500);
     }
   }
 };

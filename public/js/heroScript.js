@@ -6,22 +6,7 @@
 window.Hero = class Hero extends window.Phaser.Sprite {
   constructor(game, prevHero) {
     super();
-    let heroSprite;
-    if(!prevHero) {
-      let heroSpriteNum = this.getRandomIntInclusive(0,2);
-      switch (heroSpriteNum) {
-        case 0:
-          heroSprite = 'ninjacat';
-          break;
-        case 1:
-          heroSprite = 'alien';
-          break;
-        default:
-          heroSprite = 'alxdna';
-      }
-    } else {
-      heroSprite = prevHero.key;
-    }
+    let heroSprite = prevHero.key;
     window.Phaser.Sprite.call(this, game, 27, 523, heroSprite);
     // anchor
     this.anchor.set(0.5, 0.5);
@@ -38,24 +23,12 @@ window.Hero = class Hero extends window.Phaser.Sprite {
     // starting animation
     this.animations.play('stop');
     // setup talking and text
-    let now = Date.now().toString();
-    let text = '';
-    if(!prevHero) {
-      text = 'user ' + now.substring(now.length - 3, now.length - 1)
-    } else {
-      text = prevHero.playerText._text;
-    }
+    let text = prevHero.playerText._text;
 
     this.playerText = this.game.add.text(this.position.x - 20, this.position.y - 560, text, { fill: '#000000', fontSize: '15px', wordWrapWidth: 150, wordWrap: true, maxLines: 4, backgroundColor: 'white' });
     this.playerText.anchor.set(0.5);
     this.addChild(this.playerText);
     this.fixTextOffset();
-  }
-
-  getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
   }
 
   move(direction) {
