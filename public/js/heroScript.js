@@ -6,7 +6,7 @@
 window.Hero = class Hero extends window.Phaser.Sprite {
   constructor(game, prevHero) {
     super();
-    let heroSprite = prevHero.key;
+    let heroSprite = typeof(prevHero) === 'undefined' ? 'alien' : prevHero.key;
     window.Phaser.Sprite.call(this, game, 27, 523, heroSprite);
     // anchor
     this.anchor.set(0.5, 0.5);
@@ -23,7 +23,7 @@ window.Hero = class Hero extends window.Phaser.Sprite {
     // starting animation
     this.animations.play('stop');
     // setup talking and text
-    let text = prevHero.playerText._text;
+    let text = typeof(prevHero) === 'undefined' ? '' : prevHero.playerText._text;
 
     this.playerText = this.game.add.text(this.position.x - 20, this.position.y - 560, text, { fill: '#000000', fontSize: '15px', wordWrapWidth: 150, wordWrap: true, maxLines: 4, backgroundColor: 'white' });
     this.playerText.anchor.set(0.5);

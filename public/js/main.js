@@ -31,6 +31,7 @@ window.createMyPubNub = function (currentLevel, selectedPlayer) {
     publishKey: 'pub-c-422a6cc7-786f-4301-a2f7-3eb62c7efdc8',
     subscribeKey: 'sub-c-07eac416-ed48-11e7-8098-329148162fa8',
     uuid: window.UniqueID,
+    heartbeatInterval: 10 // the frequency of ping from client to server
   });
 
   // Subscribe to the two PubNub Channels
