@@ -33,10 +33,9 @@ window.LoadingState = { // Create an object with all of the loading information 
     this.game.load.image('turnip', 'images/turnip-sprite.png');
 
     this.game.load.spritesheet('decoration', 'images/decor.png', 42, 42);
-    this.game.load.spritesheet('alien', 'images/hero.png', 36, 42);
-    this.game.load.spritesheet('ninjacat', 'images/gameSmall.png', 36, 42);
     this.game.load.spritesheet('alxdna', 'images/alxdna.png', 33, 54);
     this.game.load.spritesheet('exelm9', 'images/exelm9.png', 33, 54);
+    this.game.load.spritesheet('ajawasthi', 'images/ajawasthi.png', 33, 54);
     this.game.load.spritesheet('spider', 'images/spider.png', 42, 32);
     this.game.load.spritesheet('coin', 'images/coin_animated.png', 22, 22);
     this.game.load.spritesheet('door', 'images/door.png', 42, 66);
@@ -54,8 +53,7 @@ window.LoadingState = { // Create an object with all of the loading information 
     window.PLAYERS = [
       {name: 'alxdna'},
       {name: 'exelm9'},
-      {name: 'ninjacat'},
-      {name: 'alien'}
+      {name: 'ajawasthi'}
     ];
     this.game.state.start('playerSelection'); // Start player selection
   }

@@ -183,9 +183,6 @@ window.PlayState = {
       }
     }
 
-    this.bgm = this.game.add.audio('bgm');
-    this.bgm.loop = true;
-    this.bgm.volume += 2;
     // create level entities and decoration
     this.game.add.image(0, 0, 'background');
     window.textObject1 = this.game.add.text(700, 5, window.text1, { font: 'Bold 200px Arial', fill: '#000000', fontSize: '20px' });
@@ -210,10 +207,6 @@ window.PlayState = {
     // update scoreboards
     this.coinFont.text = `x${this.coinPickupCount}`;
     this.keyIcon.frame = keyCollected ? 1 : 0;
-  },
-
-  shutdown() {
-    this.bgm.stop();
   },
 
   handleChat(data) {
@@ -483,8 +476,6 @@ window.PlayState = {
     this.turnips = this.game.add.group();
     this.coins = this.game.add.group();
 
-    this.bgm.play();
-    this.bgm.volume += 2;
     // spawn hero and enemies
     this._spawnCharacters({ hero: data.hero, spiders: data.spiders });
 
