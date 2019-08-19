@@ -6,7 +6,7 @@
 window.Hero = class Hero extends window.Phaser.Sprite {
   constructor(game, prevHero) {
     super();
-    let heroSprite = typeof(prevHero) === 'undefined' ? 'alien' : prevHero.key;
+    let heroSprite = typeof(prevHero) === 'undefined' ? 'alxdna' : prevHero.key;
     window.Phaser.Sprite.call(this, game, 27, 523, heroSprite);
     // anchor
     this.anchor.set(0.5, 0.5);
